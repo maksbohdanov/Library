@@ -17,6 +17,6 @@ namespace Application.Interfaces
 
         Task<BookDTO> Update(int id, BookReq model);
 
-        void DeleteById(int id);
+        Task DeleteById(int id);
     }
 }

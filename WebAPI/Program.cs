@@ -1,7 +1,13 @@
+using Application.Interfaces;
+using Application.Services;
 using Application.Utilities.Mapping;
 using AutoMapper;
+using Domain.Entities;
+using Domain.Repositories;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Middlewares;
 
 namespace WebAPI
 {
@@ -13,14 +19,18 @@ namespace WebAPI
 
             builder.Services.AddDbContext<LibraryDbContext>(x => x.UseSqlite("Data Source=library.db;"));
 
-
+            builder.Services.AddScoped<IBaseRepository<Book>, BookRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             var mapperConfig = new MapperConfiguration(mc => mc.AddProfile(new AutomapperProfile()));
             IMapper mapper = mapperConfig.CreateMapper();
             builder.Services.AddSingleton(mapper);
 
+            builder.Services.AddScoped<IBookService, BookService>();
+
+            builder.Services.AddTransient<ErrorHandlerMiddleware>();
+
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -33,10 +43,20 @@ namespace WebAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseAuthorization();
-
+            app.UseCors(builder =>
+                builder
+                    .AllowAnyHeader()
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod());
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.MapControllers();
+
+            using (var scope = app.Services.CreateAsyncScope())
+            {
+                var services = scope.ServiceProvider;
+                DataSeeder.Run(services).Wait();
+            }
 
             app.Run();
         }

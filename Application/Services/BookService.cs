@@ -53,7 +53,6 @@ namespace Application.Services
         public async Task<BookDTO> Add(BookReq model)
         {
             var book = _mapper.Map<Book>(model);
-            book.ID = -1;
             var result = await _unitOfWork.Books.CreateAsync(book);
             await _unitOfWork.SaveChangesAsync();
 
@@ -77,7 +76,7 @@ namespace Application.Services
             return _mapper.Map<BookDTO>(book);
         }
 
-        public async void DeleteById(int id)
+        public async Task DeleteById(int id)
         {
             var book = await _unitOfWork.Books.GetByIdAsync(id);
             if (book == null)
