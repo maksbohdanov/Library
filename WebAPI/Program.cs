@@ -1,3 +1,5 @@
+using Application.Utilities.Mapping;
+using AutoMapper;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,12 @@ namespace WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<LibraryDbContext>(x => x.UseSqlite("Data Source=library.db;"));
+
+
+
+            var mapperConfig = new MapperConfiguration(mc => mc.AddProfile(new AutomapperProfile()));
+            IMapper mapper = mapperConfig.CreateMapper();
+            builder.Services.AddSingleton(mapper);
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
