@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
-    [Table("Books")]
-    public class Book
+    public class Book: BaseEntity
     {
         public int ID { get; set; }
 
