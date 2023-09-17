@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<TEntity>> FindAsync(Func<TEntity, bool> predicate)
         {
-            return await _dbContext.Set<TEntity>().Where(predicate).AsQueryable().ToListAsync();
+            return (await GetAllAsync()).Where(predicate);
         }
 
         public async Task<TEntity> CreateAsync(TEntity entity)

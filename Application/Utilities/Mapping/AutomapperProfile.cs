@@ -11,8 +11,7 @@ namespace Application.Utilities.Mapping
         {
             CreateMap<Book, BookDTO>().ReverseMap();
 
-            CreateMap<BookReq, Book>()
-                .ForMember(book => book.ID, opt => opt.MapFrom(x => -1));
+            CreateMap<BookReq, Book>();
         }
     }
 }
